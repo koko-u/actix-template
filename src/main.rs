@@ -2,7 +2,9 @@ use actix_template::routes::api_route;
 use actix_template::ApiDoc;
 use actix_template::AppErr;
 use actix_template::AppResult;
+use actix_template::AppState;
 use actix_web::middleware;
+use actix_web::web;
 use actix_web::App;
 use actix_web::HttpServer;
 use env_logger::Env;
@@ -18,13 +20,15 @@ async fn main() -> AppResult<()> {
 
     let addrs = net::SocketAddr::from(([127, 0, 0, 1], 3000));
     log::info!("Listening on http://{addrs:?}");
+    log::info!("Swagger UI http://{addrs:?}/swagger-ui/");
 
+    let app_data = web::Data::new(AppState::new().await?);
     let api_doc = ApiDoc::openapi();
 
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
-            .configure(api_route)
+            .configure(api_route(app_data.clone()))
             .service(
                 SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", api_doc.clone()),
             )

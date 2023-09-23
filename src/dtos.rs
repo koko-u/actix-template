@@ -1,5 +1,5 @@
-mod user;
+mod users;
 
-pub use user::create_user::CreateUser;
-pub use user::update_user::UpdateUser;
-pub use user::user::User;
+pub use users::create_user::CreateUser;
+pub use users::update_user::UpdateUser;
+pub use users::user::User;
